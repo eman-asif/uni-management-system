@@ -1,2 +1,2 @@
-web: gunicorn uni_management_system.wsgi
+web: gunicorn config.wsgi
 
