@@ -1,0 +1,35 @@
+services:
+  web:
+    build: .
+    command: >
+      sh -c "python manage.py collectstatic --noinput &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - static_volume:/app/staticfiles
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://eman:eman49@db:5432/ums2
+      DEBUG: "1"
+      SECRET_KEY: django-insecure--p&b^c_7vhr8^_g$9phxkvx#fzu@w0cm@4wz^#trnu@n20e@13
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: ums2
+      POSTGRES_USER: eman
+      POSTGRES_PASSWORD: eman49
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  static_volume:
